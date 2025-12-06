@@ -30,5 +30,24 @@ router.post('/todo/destroy', async (req, res) => {
     res.redirect('/');
 });
 
+// POST - Edit todo item
+router.post('/todo/edit', async (req, res) => {
+    const taskKey = req.body._key;
+    const newTask = req.body.task;
+    await Todo.findByIdAndUpdate(taskKey, { task: newTask });
+    res.redirect('/');
+});
+
+// POST - Toggle completion status
+router.post('/todo/toggle', async (req, res) => {
+    const taskKey = req.body._key;
+    const todo = await Todo.findById(taskKey);
+    if (todo) {
+        todo.completed = !todo.completed;
+        await todo.save();
+    }
+    res.redirect('/');
+});
+
 
 module.exports = router;

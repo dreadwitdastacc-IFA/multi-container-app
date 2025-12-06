@@ -4,7 +4,27 @@ const Schema = mongoose.Schema;
 const TodoSchema = new Schema({
     task: {
         type: String,
-        required: true
+        required: true,
+        minlength: 1,
+        maxlength: 100,
+        match: [/^[^<>]*$/, 'Task cannot contain < or > characters.']
+    },
+    completed: {
+        type: Boolean,
+        default: false,
+        index: true
+    },
+    priority: {
+        type: String,
+        enum: ['low', 'medium', 'high'],
+        default: 'medium'
+    },
+    due_date: {
+        type: Date
+    },
+    user: {
+        type: String,
+        default: 'unassigned'
     },
     created_at: {
         type: Date,
