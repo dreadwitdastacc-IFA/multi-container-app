@@ -1,0 +1,14 @@
+# Code owners for the repository.
+# Owners listed here will be requested for review on matching changes.
+
+# Owner for app code, tests, and server
+/app/ @dreadwitdastacc-IFA
+
+# Owner for GitHub workflows and CI configuration
+/.github/ @dreadwitdastacc-IFA
+
+# Owner for Compose and infra files
+/compose.yaml @dreadwitdastacc-IFA
+
+# Fallback owner for anything else
+* @dreadwitdastacc-IFA

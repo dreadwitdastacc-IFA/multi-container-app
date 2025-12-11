@@ -8,6 +8,27 @@ You can try it out using the following command.
 
 And open http://localhost:3000 in your browser.
 
+## CI & Status
+
+The repository includes a GitHub Actions pipeline with lint, unit tests, integration, and build steps.
+
+Badges
+
+![CI](https://github.com/dreadwitdastacc-IFA/multi-container-app/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-unknown-lightgrey)
+
+Developer setup (Husky)
+
+To enable pre-commit hooks locally:
+
+```bash
+cd app
+npm install
+npx husky install .husky
+```
+
+Pre-commit hooks will run `lint-staged` to auto-fix staged files.
+
 ## Build locally with BuildKit
 
 This repository's `app/Dockerfile` uses BuildKit mount features for faster dev builds.

@@ -1,3 +1,40 @@
+Thank you for contributing to multi-container-app! This document explains contribution workflow and the repository's automation.
+
+1. Code style and pre-commit hooks
+  - The `app/` package uses `husky` + `lint-staged` to run formatters and linters before commits. To enable hooks locally:
+
+    ```bash
+    cd app
+    npm install
+    npx husky install .husky
+    ```
+
+  - If you prefer not to run hooks locally, you can bypass them with `--no-verify` when committing — but CI will still run the checks.
+
+2. Tests
+  - Unit tests are in `app/tests`. Run them with:
+
+    ```bash
+    cd app
+    npm ci
+    npm test
+    ```
+
+3. Auto-merge workflow
+  - This repository supports an `automerge` label. When a PR is labeled `automerge` and all CI checks are green, the repository's auto-merge workflow will attempt to merge the PR automatically (squash-merge by default).
+  - Requirements for auto-merge to succeed:
+    - All status checks must complete and pass.
+    - Branch protection and review policies (if configured) must be satisfied. If protected branches require reviews, make sure the PR has the required approvals before adding `automerge`.
+    - The GitHub Actions runner must have permission to merge (the default `GITHUB_TOKEN` typically suffices).
+
+4. Labels
+  - `automerge` — instructs CI/action to merge when checks pass. Use responsibly; ensure reviewers have approved changes.
+
+5. Rewriting history (removing large files)
+  - If you need to remove accidentally committed large files (for example local DB data), see `HISTORY_REWRITE_PLAN.md` for a careful, reviewable plan. This operation is destructive and requires admin rights and explicit approval.
+
+6. Contact
+  - For questions about this repository, open an issue or ping @dreadwitdastacc-IFA.
 Thank you for contributing!
 
 Quick guidelines for this minimal tutorial repo:
