@@ -20,7 +20,7 @@
     "ejs": "^3.1.10",
     "express": "^4.22.1",
     "moment": "^2.29.4",
-    "mongoose": "^7.8.4"
+    "mongoose": "^9.0.1"
   },
   "devDependencies": {
     "connect-livereload": "^0.6.1",
