@@ -14,18 +14,6 @@ const TodoSchema = new Schema({
     default: false,
     index: true,
   },
-  priority: {
-    type: String,
-    enum: ["low", "medium", "high"],
-    default: "medium",
-  },
-  due_date: {
-    type: Date,
-  },
-  user: {
-    type: String,
-    default: "unassigned",
-  },
   created_at: {
     type: Date,
     default: Date.now(),
