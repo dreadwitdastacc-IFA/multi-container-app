@@ -68,7 +68,7 @@
                                                     <input type="hidden" name="_key" value="<%= todo._id %>" />
                                                     <input type="text" name="task" value="<%= todo.task %>" class="form-control form-control-sm mr-2" aria-label="Edit task input">
                                                     <button type="submit" class="btn btn-success btn-sm" aria-label="Save edit">Save</button>
-                                                    <button type="button" class="btn btn-secondary btn-sm" onclick="this.parentElement.style.display='none';return false;" aria-label="Cancel edit">Cancel</button>
+                                                    <button type="button" class="btn btn-secondary btn-sm" onclick='this.parentElement.style.display="none";return false;' aria-label="Cancel edit">Cancel</button>
                                                 </form>
                                                 <a href="javascript:;" onclick="this.children[0].submit()" class="text-danger" aria-label="Delete task">
                                                     <form method="POST" action="/todo/destroy" aria-label="Delete task form">
