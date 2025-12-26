@@ -41,8 +41,7 @@ You can also run the smoke test after starting the app locally (or after Compose
 
 ```bash
 cd app
-npm run smok
-e
+npm run smoke
 ```
 
 Note: to run the smoke test use:
