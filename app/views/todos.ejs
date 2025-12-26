@@ -44,7 +44,7 @@
                             <% if(Object.keys(tasks).length> 0) { %>
                                 <ul class="nav flex-column" role="list" aria-label="Todo list">
                                     <% tasks.forEach(todo=> { %>
-                                        <li class="nav-item" role="listitem">
+                                        <li class="nav-item">
                                             <div class="d-flex justify-content-between py-1 align-items-center" aria-live="polite">
                                                 <div class="d-flex flex-row align-items-center">
                                                     <form method="POST" action="/todo/toggle" aria-label="Toggle task completion">
