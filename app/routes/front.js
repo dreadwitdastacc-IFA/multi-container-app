@@ -45,13 +45,21 @@ router.post("/todo/edit", async (req, res) => {
 
 // POST - Toggle completion status
 router.post("/todo/toggle", async (req, res) => {
-  const taskKey = req.body._key;
-  const todo = await Todo.findById(taskKey);
-  if (todo) {
+  try {
+    const taskKey = req.body._key;
+    const todo = await Todo.findById(taskKey);
+
+    if (!todo) {
+      return res.status(404).send("Todo not found");
+    }
+
     todo.completed = !todo.completed;
     await todo.save();
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while toggling the todo item");
   }
-  res.redirect("/");
 });
 
 module.exports = router;
