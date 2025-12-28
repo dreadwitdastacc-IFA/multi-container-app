@@ -46,9 +46,10 @@ jest.mock("../models/Todo", () => {
       return doc;
     }
 
-    static find() {
-      const result = store.map((doc) => new MockTodo(doc));
-      result.lean = async () => store.map((doc) => clone(doc));
+    static find(query = {}) {
+      const filtered = store.filter((doc) => matches(doc, query));
+      const result = filtered.map((doc) => new MockTodo(doc));
+      result.lean = () => filtered.map((doc) => clone(doc));
       return result;
     }
 
@@ -79,7 +80,7 @@ jest.mock("../models/Todo", () => {
     }
 
     static async deleteMany(filter) {
-      for (let i = store.length - 1; i >= 0; i -= 1) {
+      for (let i = store.length - 1; i >= 0; i--) {
         if (matches(store[i], filter || {})) {
           store.splice(i, 1);
         }
