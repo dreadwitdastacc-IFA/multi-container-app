@@ -1,28 +1,107 @@
 const request = require("supertest");
-const mongoose = require("mongoose");
-const { MongoMemoryServer } = require("mongodb-memory-server");
-const app = require("../server");
-const Todo = require("../models/Todo");
 
-let mongoServer;
+// Provide a lightweight in-memory mock for the Todo model so tests do not need
+// to download MongoDB binaries (network access is restricted in CI).
+jest.mock("../models/Todo", () => {
+  const crypto = require("crypto");
+  const store = [];
 
-beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const uri = mongoServer.getUri();
-  await mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+  const clone = (doc) => ({
+    _id: doc._id,
+    task: doc.task,
+    completed: doc.completed,
+    created_at: doc.created_at,
   });
+
+  class MockTodo {
+    constructor(data) {
+      this._id = data._id || crypto.randomBytes(12).toString("hex");
+      this.task = data.task;
+      this.completed = data.completed ?? false;
+      this.created_at = data.created_at || new Date();
+    }
+
+    async save() {
+      const existing = store.findIndex((doc) => doc._id === this._id);
+      if (existing === -1) {
+        store.push(this);
+      } else {
+        store[existing] = this;
+      }
+      return this;
+    }
+
+    lean() {
+      return clone(this);
+    }
+
+    static _reset() {
+      store.length = 0;
+    }
+
+    static async create(data) {
+      const doc = new MockTodo(data);
+      await doc.save();
+      return doc;
+    }
+
+    static find() {
+      const result = store.map((doc) => doc);
+      result.lean = async () => store.map((doc) => doc.lean());
+      return result;
+    }
+
+    static findOne(query) {
+      const doc = store.find((item) =>
+        Object.entries(query).every(([key, value]) => item[key] === value)
+      );
+      return doc ? doc : null;
+    }
+
+    static findById(id) {
+      const doc = store.find((item) => item._id === id);
+      return doc || null;
+    }
+
+    static async findByIdAndUpdate(id, update) {
+      const doc = MockTodo.findById(id);
+      if (!doc) return null;
+      if (update.task !== undefined) doc.task = update.task;
+      if (update.completed !== undefined) doc.completed = update.completed;
+      return doc;
+    }
+
+    static async findOneAndRemove(query) {
+      const index = store.findIndex((item) =>
+        Object.entries(query).every(([key, value]) => item[key] === value)
+      );
+      if (index === -1) return null;
+      const [removed] = store.splice(index, 1);
+      return removed;
+    }
+
+    static async deleteMany(filter) {
+      if (filter && filter.completed === true) {
+        for (let i = store.length - 1; i >= 0; i -= 1) {
+          if (store[i].completed === true) {
+            store.splice(i, 1);
+          }
+        }
+      } else {
+        store.length = 0;
+      }
+      return { acknowledged: true };
+    }
+  }
+
+  return MockTodo;
 });
 
-afterAll(async () => {
-  await mongoose.disconnect();
-  if (mongoServer) await mongoServer.stop();
-});
+const Todo = require("../models/Todo");
+const app = require("../server");
 
-beforeEach(async () => {
-  // clean database between tests
-  await mongoose.connection.db.dropDatabase();
+beforeEach(() => {
+  Todo._reset();
 });
 
 describe("Todos CRUD (HTTP)", () => {
