@@ -16,9 +16,17 @@ jest.mock("../models/Todo", () => {
   const matches = (doc, query = {}) =>
     Object.entries(query).every(([key, value]) => doc[key] === value);
 
+  const generateObjectId = () => {
+    const timestamp = Math.floor(Date.now() / 1000)
+      .toString(16)
+      .padStart(8, "0");
+    const random = crypto.randomBytes(8).toString("hex");
+    return (timestamp + random).slice(0, 24);
+  };
+
   class MockTodo {
     constructor(data) {
-      this._id = data._id || crypto.randomBytes(12).toString("hex");
+      this._id = data._id || generateObjectId();
       this.task = data.task;
       this.completed = data.completed ?? false;
       this.created_at = data.created_at || new Date();
@@ -80,12 +88,14 @@ jest.mock("../models/Todo", () => {
     }
 
     static async deleteMany(filter) {
+      let deletedCount = 0;
       for (let i = store.length - 1; i >= 0; i--) {
         if (matches(store[i], filter || {})) {
           store.splice(i, 1);
+          deletedCount++;
         }
       }
-      return { acknowledged: true };
+      return { acknowledged: true, deletedCount };
     }
   }
 
