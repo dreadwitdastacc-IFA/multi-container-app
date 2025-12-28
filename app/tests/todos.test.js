@@ -13,6 +13,9 @@ jest.mock("../models/Todo", () => {
     created_at: doc.created_at,
   });
 
+  const matches = (doc, query = {}) =>
+    Object.entries(query).every(([key, value]) => doc[key] === value);
+
   class MockTodo {
     constructor(data) {
       this._id = data._id || crypto.randomBytes(12).toString("hex");
@@ -22,12 +25,10 @@ jest.mock("../models/Todo", () => {
     }
 
     async save() {
+      const snapshot = clone(this);
       const existing = store.findIndex((doc) => doc._id === this._id);
-      if (existing === -1) {
-        store.push(this);
-      } else {
-        store[existing] = this;
-      }
+      if (existing === -1) store.push(snapshot);
+      else store[existing] = snapshot;
       return this;
     }
 
@@ -46,21 +47,19 @@ jest.mock("../models/Todo", () => {
     }
 
     static find() {
-      const result = store.map((doc) => doc);
-      result.lean = async () => store.map((doc) => doc.lean());
+      const result = store.map((doc) => new MockTodo(doc));
+      result.lean = async () => store.map((doc) => clone(doc));
       return result;
     }
 
     static findOne(query) {
-      const doc = store.find((item) =>
-        Object.entries(query).every(([key, value]) => item[key] === value)
-      );
-      return doc ? doc : null;
+      const doc = store.find((item) => matches(item, query));
+      return doc ? new MockTodo(doc) : null;
     }
 
     static findById(id) {
       const doc = store.find((item) => item._id === id);
-      return doc || null;
+      return doc ? new MockTodo(doc) : null;
     }
 
     static async findByIdAndUpdate(id, update) {
@@ -68,27 +67,22 @@ jest.mock("../models/Todo", () => {
       if (!doc) return null;
       if (update.task !== undefined) doc.task = update.task;
       if (update.completed !== undefined) doc.completed = update.completed;
+      await doc.save();
       return doc;
     }
 
     static async findOneAndRemove(query) {
-      const index = store.findIndex((item) =>
-        Object.entries(query).every(([key, value]) => item[key] === value)
-      );
+      const index = store.findIndex((item) => matches(item, query));
       if (index === -1) return null;
       const [removed] = store.splice(index, 1);
-      return removed;
+      return new MockTodo(removed);
     }
 
     static async deleteMany(filter) {
-      if (filter && filter.completed === true) {
-        for (let i = store.length - 1; i >= 0; i -= 1) {
-          if (store[i].completed === true) {
-            store.splice(i, 1);
-          }
+      for (let i = store.length - 1; i >= 0; i -= 1) {
+        if (matches(store[i], filter || {})) {
+          store.splice(i, 1);
         }
-      } else {
-        store.length = 0;
       }
       return { acknowledged: true };
     }
