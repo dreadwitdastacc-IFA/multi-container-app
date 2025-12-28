@@ -14,4 +14,4 @@ dist/
 app/node_modules
 .vscode
 mongo-data/
-.husky/
+.husky/_
