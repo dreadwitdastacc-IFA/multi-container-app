@@ -103,7 +103,7 @@ app.use(generalLimiter);
 app.use(
   mongoSanitize({
     replaceWith: "_",
-    onSanitize: ({ req, key }) => {
+    onSanitize: ({ key }) => {
       console.warn(`Sanitized potentially malicious input in ${key}`);
     },
   })
