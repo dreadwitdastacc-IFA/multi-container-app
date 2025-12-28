@@ -81,4 +81,22 @@ describe("Todos CRUD (HTTP)", () => {
     const found = await Todo.findById(created._id);
     expect(found).toBeNull();
   });
+
+  test("clears all completed tasks via POST /todo/clear-completed", async () => {
+    // Create a mix of completed and incomplete tasks
+    await Todo.create({ task: "Completed task 1", completed: true });
+    await Todo.create({ task: "Incomplete task", completed: false });
+    await Todo.create({ task: "Completed task 2", completed: true });
+
+    const res = await request(app)
+      .post("/todo/clear-completed")
+      .type("form");
+
+    expect(res.status).toBe(302);
+
+    const remaining = await Todo.find().lean();
+    expect(remaining.length).toBe(1);
+    expect(remaining[0].task).toBe("Incomplete task");
+    expect(remaining[0].completed).toBe(false);
+  });
 });

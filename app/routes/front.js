@@ -93,4 +93,15 @@ router.post("/todo/toggle", async (req, res) => {
   }
 });
 
+// POST - Clear all completed tasks
+router.post("/todo/clear-completed", async (req, res) => {
+  try {
+    await Todo.deleteMany({ completed: true });
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("An error occurred while clearing completed tasks");
+  }
+});
+
 module.exports = router;

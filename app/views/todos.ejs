@@ -80,6 +80,20 @@
                                         </li>
                                         <% }) %>
                                 </ul>
+                                <% 
+                                const hasCompletedTasks = tasks.some && tasks.some(todo => todo.completed);
+                                if (hasCompletedTasks) { 
+                                %>
+                                <div class="row mt-3">
+                                    <div class="col-12 text-center">
+                                        <form method="POST" action="/todo/clear-completed" onsubmit="return confirm('Are you sure you want to delete all completed tasks?');" aria-label="Clear all completed tasks">
+                                            <button type="submit" class="btn btn-danger btn-sm" aria-label="Clear completed tasks">
+                                                <i class="fa fa-trash" aria-hidden="true"></i> Clear Completed
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <% } %>
                                 <% } else { %>
                                     <div class="text-center"><strong>Please add some task.</strong></div>
                                     <% }%>
