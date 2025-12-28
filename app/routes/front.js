@@ -93,10 +93,10 @@ router.post(
       .trim()
       .notEmpty()
       .withMessage("Task cannot be empty")
-      .isLength({ min: 1, max: 200 })
-      .withMessage("Task must be between 1 and 200 characters")
-      .matches(/^[\w\s.,!?'"-]*$/u)
-      .withMessage("Task contains invalid characters")
+      .isLength({ min: 1, max: 100 })
+      .withMessage("Task must be between 1 and 100 characters")
+      .matches(/^[^<>]*$/)
+      .withMessage("Task cannot contain < or > characters")
       .escape(), // HTML escape for XSS protection
   ],
   async (req, res) => {

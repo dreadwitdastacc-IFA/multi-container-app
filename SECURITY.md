@@ -60,7 +60,7 @@ Removes or replaces characters that could be used in NoSQL injection attacks
 ```javascript
 app.use(mongoSanitize({
   replaceWith: "_",
-  onSanitize: ({ req, key }) => {
+  onSanitize: ({ key }) => {
     console.warn(`Sanitized potentially malicious input in ${key}`);
   },
 }));
