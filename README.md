@@ -44,13 +44,6 @@ cd app
 npm run smoke
 ```
 
-Note: to run the smoke test use:
-
-```bash
-cd app
-npm run smoke
-```
-
 ## Build a production image
 
 Build a production image (uses the `production` target which installs only production deps):
