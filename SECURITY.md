@@ -69,7 +69,7 @@ app.use(mongoSanitize({
 #### B. Input Validation (express-validator)
 Validates and sanitizes all user inputs on each endpoint:
 - Task creation: Length limits (1-100 chars), pattern matching, HTML escaping
-- Task editing: Length limits (1-200 chars), pattern matching, HTML escaping
+- Task editing: Length limits (1-100 chars), pattern matching, HTML escaping
 - ID validation: MongoDB ObjectId format validation
 - XSS protection: HTML entity escaping on all text inputs
 
